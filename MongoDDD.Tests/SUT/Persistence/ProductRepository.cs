@@ -6,8 +6,8 @@ using MongoDDD.Tests.SUT.Persistence.Data;
 
 namespace MongoDDD.Tests.SUT.Persistence;
 
-internal class ProductRepository(MongoClient client, ProductsDatabaseSettings settings) 
-    : Repository<Product, Product.State, ProductData>(client, settings)
+internal class ProductRepository(MongoClient client, ProductsDatabaseSettings settings, IServiceProvider services) 
+    : Repository<Product, Product.State, ProductData>(client, settings, services)
     , IProductRepository
 {
     protected override Product.State Map(ProductData aggregateData) => new(aggregateData.Name, aggregateData.Price, 0);
@@ -15,8 +15,8 @@ internal class ProductRepository(MongoClient client, ProductsDatabaseSettings se
     protected override ProductData Map(Product.State aggregateState) => new(aggregateState.Name, aggregateState.Price);
 }
 
-internal class ProductRepositoryWithExternalData(MongoClient client, ProductsDatabaseSettings settings) 
-    : Repository<Product, Product.State, ProductData, ExternalData>(client, settings)
+internal class ProductRepositoryWithExternalData(MongoClient client, ProductsDatabaseSettings settings, IServiceProvider services) 
+    : Repository<Product, Product.State, ProductData, ExternalData>(client, settings, services)
     , IProductRepository
 {
     protected override ExternalData Initialize(Product.State aggregateState) => new(0);

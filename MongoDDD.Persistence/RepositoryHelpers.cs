@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace MongoDDD.Persistence
 {
     public abstract partial class Repository<TAggregateRoot, TAggregateState, TAggregateRootData, TExternalData> : IRepository<TAggregateRoot, TAggregateState>
-        where TAggregateRoot : AggregateRoot<TAggregateState>, new()
+        where TAggregateRoot : AggregateRoot<TAggregateState>
     {
         private static FilterDefinitionBuilder<DatabaseDocument<TAggregateRootData, TExternalData>> Filter =>
             Builders<DatabaseDocument<TAggregateRootData, TExternalData>>.Filter;

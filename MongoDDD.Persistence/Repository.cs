@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
 using MongoDDD.Core;
 using MongoDDD.Core.Exceptions;
 using MongoDDD.Persistence.Configuration;
@@ -10,9 +11,10 @@ using System.Threading.Tasks;
 namespace MongoDDD.Persistence
 {
     public abstract class Repository<TAggregateRoot, TAggregateState, TAggregateRootData> : Repository<TAggregateRoot, TAggregateState, TAggregateRootData, None>
-        where TAggregateRoot : AggregateRoot<TAggregateState>, new()
+        where TAggregateRoot : AggregateRoot<TAggregateState>
     {
-        protected Repository(MongoClient client, DatabaseSettings settings) : base(client, settings) { }
+        protected Repository(MongoClient client, DatabaseSettings settings, IServiceProvider services) 
+            : base(client, settings,services) { }
 
         protected abstract TAggregateState Map(TAggregateRootData aggregateData);
 
@@ -22,12 +24,14 @@ namespace MongoDDD.Persistence
     }
 
     public abstract partial class Repository<TAggregateRoot, TAggregateState, TAggregateRootData, TExternalData> : IRepository<TAggregateRoot, TAggregateState>
-        where TAggregateRoot : AggregateRoot<TAggregateState>, new()
+        where TAggregateRoot : AggregateRoot<TAggregateState>
     {
+        private readonly IServiceProvider _services;
         private readonly IMongoCollection<DatabaseDocument<TAggregateRootData, TExternalData>> _collection;
 
-        public Repository(MongoClient client, DatabaseSettings settings)
+        public Repository(MongoClient client, DatabaseSettings settings, IServiceProvider services)
         {
+            _services = services;
             _collection = client
                 .GetDatabase(settings.Database)
                 .GetCollection<DatabaseDocument<TAggregateRootData, TExternalData>>(settings.Collection);
@@ -72,7 +76,7 @@ namespace MongoDDD.Persistence
         public async Task<TAggregateRoot> Get(string id, CancellationToken token)
         {
             var document = await GetDocument(id, token);
-            var aggregate = new TAggregateRoot();
+            var aggregate = ActivatorUtilities.CreateInstance<TAggregateRoot>(_services);
             var aggregateState = Map(document.Data, document.ExternalData);
             aggregate.Restore(new AggregateSnapshot<TAggregateState>(document.Id, document.Version, aggregateState));
             return aggregate;

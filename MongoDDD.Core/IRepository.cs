@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace MongoDDD.Core
 {
     public interface IRepository<TAggregateRoot, TAggregateState> 
-        where TAggregateRoot : AggregateRoot<TAggregateState>, new()
+        where TAggregateRoot : AggregateRoot<TAggregateState>
     {
         Task Add(TAggregateRoot aggregate, CancellationToken token);
 
