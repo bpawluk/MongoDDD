@@ -29,7 +29,5 @@ namespace MongoDDD.Persistence.Queries
                 throw;
             }
         }
-
-        // TODO: InsertMany
     }
 }

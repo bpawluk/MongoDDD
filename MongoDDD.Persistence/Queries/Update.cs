@@ -13,6 +13,7 @@ namespace MongoDDD.Persistence.Queries
             CancellationToken token,
             bool isUpsert = false)
         {
+            filter = filter & NotDeleted;
             var options = new FindOneAndUpdateOptions<DatabaseDocument<TData, TExternalData>>
             {
                 ReturnDocument = ReturnDocument.After,
@@ -28,30 +29,32 @@ namespace MongoDDD.Persistence.Queries
             return document;
         }
 
-        protected async Task UpdateOne(
+        protected async Task<UpdateResult> UpdateOne(
             FilterDefinition<DatabaseDocument<TData, TExternalData>> filter,
             UpdateDefinition<DatabaseDocument<TData, TExternalData>> update,
             CancellationToken token,
             bool isUpsert = false)
         {
+            filter = filter & NotDeleted;
             var options = new UpdateOptions
             {
                 IsUpsert = isUpsert
             };
-            await _collection.UpdateOneAsync(filter, update, options, token);
+            return await _collection.UpdateOneAsync(filter, update, options, token);
         }
 
-        protected async Task UpdateMany(
+        protected async Task<UpdateResult> UpdateMany(
             FilterDefinition<DatabaseDocument<TData, TExternalData>> filter,
             UpdateDefinition<DatabaseDocument<TData, TExternalData>> update,
             CancellationToken token,
             bool isUpsert = false)
         {
+            filter = filter & NotDeleted;
             var options = new UpdateOptions
             {
                 IsUpsert = isUpsert
             };
-            await _collection.UpdateManyAsync(filter, update, options, token);
+            return await _collection.UpdateManyAsync(filter, update, options, token);
         }
     }
 }

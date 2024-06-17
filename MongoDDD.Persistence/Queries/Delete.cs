@@ -12,7 +12,8 @@ namespace MongoDDD.Persistence.Queries
             FilterDefinition<DatabaseDocument<TData, TExternalData>> filter,
             CancellationToken token)
         {
-            var update = Update.Set(document => document.Deleted, DateTime.UtcNow);
+            filter = filter & NotDeleted;
+            var update = SilentUpdate.Set(document => document.Deleted, DateTime.UtcNow);
             var options = new FindOneAndUpdateOptions<DatabaseDocument<TData, TExternalData>>
             {
                 ReturnDocument = ReturnDocument.After,
@@ -28,18 +29,18 @@ namespace MongoDDD.Persistence.Queries
             return document;
         }
 
-        public async Task DeleteOne(FilterDefinition<DatabaseDocument<TData, TExternalData>> filter, CancellationToken token)
+        public async Task<UpdateResult> DeleteOne(FilterDefinition<DatabaseDocument<TData, TExternalData>> filter, CancellationToken token)
         {
             filter = filter & NotDeleted;
-            var update = Update.Set(document => document.Deleted, DateTime.UtcNow);
-            await _collection.UpdateOneAsync(filter, update, cancellationToken: token);
+            var update = SilentUpdate.Set(document => document.Deleted, DateTime.UtcNow);
+            return await _collection.UpdateOneAsync(filter, update, cancellationToken: token);
         }
 
-        public async Task DeleteMany(FilterDefinition<DatabaseDocument<TData, TExternalData>> filter, CancellationToken token)
+        public async Task<UpdateResult> DeleteMany(FilterDefinition<DatabaseDocument<TData, TExternalData>> filter, CancellationToken token)
         {
             filter = filter & NotDeleted;
-            var update = Update.Set(document => document.Deleted, DateTime.UtcNow);
-            await _collection.UpdateManyAsync(filter, update, cancellationToken: token);
+            var update = SilentUpdate.Set(document => document.Deleted, DateTime.UtcNow);
+            return await _collection.UpdateManyAsync(filter, update, cancellationToken: token);
         }
     }
 }

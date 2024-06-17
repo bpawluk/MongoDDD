@@ -12,9 +12,10 @@ namespace MongoDDD.Persistence.Queries
     public partial class DatabaseQuery<TData, TExternalData>
     {
         protected async Task<DatabaseDocument<TData, TExternalData>> FindOne(
-            FilterDefinition<DatabaseDocument<TData, TExternalData>> filter, 
+            FilterDefinition<DatabaseDocument<TData, TExternalData>> filter,
             CancellationToken token)
         {
+            filter = filter & NotDeleted;
             var cursor = await _collection.FindAsync(filter, cancellationToken: token);
             var document = await cursor.FirstOrDefaultAsync(cancellationToken: token);
 
@@ -30,6 +31,7 @@ namespace MongoDDD.Persistence.Queries
             FilterDefinition<DatabaseDocument<TData, TExternalData>> filter,
             CancellationToken token)
         {
+            filter = filter & NotDeleted;
             var cursor = await _collection.FindAsync(filter, cancellationToken: token);
             return await cursor.ToListAsync(token);
         }
@@ -39,6 +41,7 @@ namespace MongoDDD.Persistence.Queries
             SortDefinition<DatabaseDocument<TData, TExternalData>> sort,
             CancellationToken token)
         {
+            filter = filter & NotDeleted;
             var options = new FindOptions<DatabaseDocument<TData, TExternalData>>
             {
                 Sort = sort
@@ -53,8 +56,18 @@ namespace MongoDDD.Persistence.Queries
             PageInfo pageInfo,
             CancellationToken token)
         {
+            if (pageInfo.Number < 1)
+            {
+                throw new ArgumentException($"Requested page number {pageInfo.Number} is invalid.");
+            }
+
+            if (pageInfo.Size < 1)
+            {
+                throw new ArgumentException($"Requested page size {pageInfo.Size} is invalid.");
+            }
+
             var countFacet = AggregateFacet.Create(
-                "count", 
+                "count",
                 PipelineDefinition<DatabaseDocument<TData, TExternalData>, AggregateCountResult>.Create(new[]
                 {
                     PipelineStageDefinitionBuilder.Count<DatabaseDocument<TData, TExternalData>>()
@@ -68,6 +81,7 @@ namespace MongoDDD.Persistence.Queries
                     PipelineStageDefinitionBuilder.Limit<DatabaseDocument<TData, TExternalData>>(pageInfo.Size),
                 }));
 
+            filter = filter & NotDeleted;
             var aggregation = await _collection.Aggregate()
                 .Match(filter)
                 .Sort(sort)
@@ -79,7 +93,7 @@ namespace MongoDDD.Persistence.Queries
                 .Output<AggregateCountResult>()
                 .SingleOrDefault()
                 ?.Count ?? 0;
-            var numberOfPages = (int)Math.Ceiling(Math.Max(count, 1) / pageInfo.Size);
+            var numberOfPages = (int)Math.Ceiling(count / pageInfo.Size);
 
             var documents = aggregation.Facets
                 .First(x => x.Name == "data")

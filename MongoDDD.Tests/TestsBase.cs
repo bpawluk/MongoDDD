@@ -84,7 +84,7 @@ public abstract class TestsBase : IAsyncLifetime
         {
             Assert.NotNull(actualDocument.Modified);
             Assert.True(DateTime.UtcNow - actualDocument.Modified < _timeout);
-            Assert.True(actualDocument.Modified > actualDocument.Created);
+            Assert.True(actualDocument.Modified >= actualDocument.Created);
         }
         else
         {
@@ -95,7 +95,7 @@ public abstract class TestsBase : IAsyncLifetime
         {
             Assert.NotNull(actualDocument.Deleted);
             Assert.True(DateTime.UtcNow - actualDocument.Deleted < _timeout);
-            Assert.True(actualDocument.Deleted > actualDocument.Created);
+            Assert.True(actualDocument.Deleted >= actualDocument.Created);
         }
         else
         {

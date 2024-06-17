@@ -62,7 +62,7 @@ namespace MongoDDD.Persistence
                 {
                     throw new AlreadyExistsException($"{typeof(TAggregate).Name} with ID {newDocument.Id} already exists.");
                 }
-                throw new OperationFailedException($"Could not add a new {typeof(TAggregate).Name}", mongoWriteException);
+                throw new OperationFailedException($"Failed to add a new {typeof(TAggregate).Name}", mongoWriteException);
             }
 
             var newAggregateState = Map(newDocument.Data, newDocument.ExternalData);
@@ -108,7 +108,7 @@ namespace MongoDDD.Persistence
                 }
                 else
                 {
-                    throw new OperationFailedException($"Could not save an existing {typeof(TAggregate).Name}");
+                    throw new OperationFailedException($"Failed to save an existing {typeof(TAggregate).Name}");
                 }
             }
 

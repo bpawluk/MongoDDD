@@ -7,7 +7,7 @@ using MongoDDD.Tests.SUT.Persistence.Data;
 
 namespace MongoDDD.Tests.SUT.Persistence.Queries;
 
-internal class WriteReviewScore(MongoClient client, ProductsDatabaseSettings settings) 
+internal class UpdateReviewScoreQuery(MongoClient client, ProductsDatabaseSettings settings) 
     : DatabaseQuery<ProductData, ExternalData>(client, settings)
     , IWriteQuery<UpdateReviewScore>
 {
