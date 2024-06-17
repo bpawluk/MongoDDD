@@ -2,7 +2,7 @@
 
 namespace MongoDDD.Tests.SUT.Core;
 
-public class Product : Aggregate<Product.State>
+public class Product : AggregateRoot<Product.State>
 {
     public Product() { }
 

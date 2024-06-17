@@ -2,7 +2,7 @@
 
 namespace MongoDDD.Core
 {
-    public abstract class Aggregate<TAggregateState>
+    public abstract class AggregateRoot<TAggregateState>
     {
         private int _version = -1;
 
@@ -10,9 +10,9 @@ namespace MongoDDD.Core
 
         public string Id { get; private set; } = default!;
 
-        public Aggregate() { }
+        public AggregateRoot() { }
 
-        public Aggregate(string id)
+        public AggregateRoot(string id)
         {
             Id = id;
         }

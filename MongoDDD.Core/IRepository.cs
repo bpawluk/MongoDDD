@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 
 namespace MongoDDD.Core
 {
-    public interface IRepository<TAggregate, TAggregateState> 
-        where TAggregate : Aggregate<TAggregateState>, new()
+    public interface IRepository<TAggregateRoot, TAggregateState> 
+        where TAggregateRoot : AggregateRoot<TAggregateState>, new()
     {
-        Task Add(TAggregate aggregate, CancellationToken token);
+        Task Add(TAggregateRoot aggregate, CancellationToken token);
 
-        Task<TAggregate> Get(string id, CancellationToken token);
+        Task<TAggregateRoot> Get(string id, CancellationToken token);
 
-        Task Save(TAggregate aggregate, CancellationToken token);
+        Task Save(TAggregateRoot aggregate, CancellationToken token);
 
         Task Remove(string id, CancellationToken token);
     }
