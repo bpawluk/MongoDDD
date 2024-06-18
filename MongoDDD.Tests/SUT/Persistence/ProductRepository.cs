@@ -6,19 +6,23 @@ using MongoDDD.Tests.SUT.Persistence.Data;
 
 namespace MongoDDD.Tests.SUT.Persistence;
 
-internal class ProductRepository(MongoClient client, ProductsDatabaseSettings settings, IServiceProvider services) 
-    : Repository<Product, Product.State, ProductData>(client, settings, services)
+internal class ProductRepository(MongoClient client, ProductsDatabaseSettings settings) 
+    : Repository<Product, Product.State, ProductData>(client, settings)
     , IProductRepository
 {
+    protected override Product Create() => new();
+
     protected override Product.State Map(ProductData aggregateData) => new(aggregateData.Name, aggregateData.Price, 0);
 
     protected override ProductData Map(Product.State aggregateState) => new(aggregateState.Name, aggregateState.Price);
 }
 
-internal class ProductRepositoryWithExternalData(MongoClient client, ProductsDatabaseSettings settings, IServiceProvider services) 
-    : Repository<Product, Product.State, ProductData, ExternalData>(client, settings, services)
+internal class ProductRepositoryWithExternalData(MongoClient client, ProductsDatabaseSettings settings) 
+    : Repository<Product, Product.State, ProductData, ExternalData>(client, settings)
     , IProductRepository
 {
+    protected override Product Create() => new();
+
     protected override ExternalData Initialize(Product.State aggregateState) => new(0);
 
     protected override Product.State Map(ProductData aggregateData, ExternalData externalData) 

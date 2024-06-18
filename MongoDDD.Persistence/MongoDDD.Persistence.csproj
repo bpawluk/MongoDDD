@@ -1,17 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Major>0</Major>
+    <Minor>2</Minor>
+    <Patch>0</Patch>
+    <VersionPrefix>$(Major).$(Minor).$(Patch)</VersionPrefix>
+    <AssemblyVersion>$(Major).0.0.0</AssemblyVersion>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Authors>Bartosz Pawluk</Authors>
+    <Title>$(AssemblyName)</Title>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Copyright>Copyright Bartosz Pawluk</Copyright>
+    <PackageProjectUrl>https://github.com/bpawluk/MongoDDD</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bpawluk/MongoDDD</RepositoryUrl>
+    <PackageTags>mongodb; persistence; ddd; domain-driven-design</PackageTags>
+    <Description>MongoDB persistence with a touch of Domain-Driven Design</Description>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MongoDDD.Core\MongoDDD.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Assets\logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
